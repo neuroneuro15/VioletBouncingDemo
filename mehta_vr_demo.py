@@ -34,7 +34,11 @@ reader = WavefrontReader('vr_demo.obj')
 meshes = {name:reader.get_mesh(name, lighting=True, centered=False) for name in reader.mesh_names}
 meshes['Arena'].visible = False
 meshes['StarGrid'].drawstyle = 'point'
+
 meshes['Monkey'].load_texture(resources.img_colorgrid)
+meshes['Monkey'].material.spec_weight = 10.
+meshes['Monkey'].material.diffuse.rgb = (1.,)*3
+
 
 #del meshes['StarGrid']
 
@@ -72,7 +76,7 @@ for name, ball in balls.items():
     position = ball.local.position.copy()
     prefix = name.split('B')[0]
     floor_height = meshes[prefix+'Plank'].local.position[1]
-    ball.local = Bouncer(velocity=(0., 0., 0.), acceleration_amt=-2.2, position=position, floor_height=floor_height)  # (-.1, 0., 1.)
+    ball.local = Bouncer(velocity=(-.1, 0., 1.), acceleration_amt=-2.2, position=position, floor_height=floor_height)  #(-.1, 0., 1.)
     ball.material.diffuse.rgb = np.random.random(3)
     ball.material.spec_color.rgb = (.7,) * 3
     ball.material.spec_weight = 15.
@@ -80,6 +84,11 @@ for name, ball in balls.items():
 for prefix in ['High', 'Mid', 'Low']:
     meshes[prefix+'Ball'].local.floor_height = meshes[prefix+'Plank'].local.position[1]
 
+direction = np.array([-.1, 0., 1.])
+pos_border = meshes['HighPlank'].local.position + (1. * direction)
+neg_border = meshes['HighPlank'].local.position + (1. * -direction)
+
+print("Borders: \n{}\n{}\n{}\n".format(pos_border, neg_border, ball.local.position))
 
 # Main loop
 clock = ratcave.utils.timers.countdown_timer(3000)
@@ -99,6 +108,12 @@ while not 'escape' in event.getKeys() and clock.next() > 0.:
     old_time = new_time
     for ball in balls.values():
         ball.local.update_physics(dt)
+        # Keep the balls inside the arena!
+        if ball.local.position[2] < neg_border[2] or ball.local.position[2] > pos_border[2]:
+            ball.local.velocity[0] *= -1.
+            ball.local.velocity[2] *= -1.
+
+
 
 
     #virtual_scene.light.position[0] = np.sin(2* clock.next()) + active_scene.camera.position[0]
