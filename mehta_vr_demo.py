@@ -7,7 +7,7 @@ from ratcave.graphics import *
 from ratcave.utils import rotate_to_var
 import numpy as np
 import argparse
-
+from ball_simulation import Bouncer
 
 np.set_printoptions(precision=2, suppress=True)
 
@@ -66,16 +66,24 @@ virtual_scene.bgColor.rgb = .1, 0., .1
 # Make a Window
 window = Window(active_scene, screen=1, fullscr=True, virtual_scene=virtual_scene, shadow_rendering=True, shadow_fov_y = 80, autoCam=False)
 
-# Get original positions of the balls
-balls = [meshes[name] for name in meshes if 'Ball' in name]
-for ball in balls:
-    ball.position_orig = ball.local.position.copy()
+# Ball Physics
+balls = {name: meshes[name] for name in meshes if 'Ball' in name}
+for name, ball in balls.items():
+    position = ball.local.position.copy()
+    prefix = name.split('B')[0]
+    floor_height = meshes[prefix+'Plank'].local.position[1]
+    ball.local = Bouncer(velocity=(0., 0., 0.), acceleration_amt=-2.2, position=position, floor_height=floor_height)  # (-.1, 0., 1.)
     ball.material.diffuse.rgb = np.random.random(3)
     ball.material.spec_color.rgb = (.7,) * 3
     ball.material.spec_weight = 15.
 
+for prefix in ['High', 'Mid', 'Low']:
+    meshes[prefix+'Ball'].local.floor_height = meshes[prefix+'Plank'].local.position[1]
+
+
 # Main loop
 clock = ratcave.utils.timers.countdown_timer(3000)
+old_time = 3000.
 while not 'escape' in event.getKeys() and clock.next() > 0.:
 
 
@@ -86,10 +94,12 @@ while not 'escape' in event.getKeys() and clock.next() > 0.:
         mesh.world.rotation = arena_rb.rotation_global
         mesh.world.rotation[1] += additional_rotation
 
-    velocity, dt = 3., clock.next()
-    for ball in balls:
-        ball.local.position[2] = ball.position_orig[2] + (1. * np.sin(velocity * dt))
-        ball.local.position[0] = ball.position_orig[0] + (-.1 * np.sin(velocity * dt))
+    new_time = clock.next()
+    dt = old_time - new_time  # Because it's a countdown timer.
+    old_time = new_time
+    for ball in balls.values():
+        ball.local.update_physics(dt)
+
 
     #virtual_scene.light.position[0] = np.sin(2* clock.next()) + active_scene.camera.position[0]
     virtual_scene.camera.position = player.location
