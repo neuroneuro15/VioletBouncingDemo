@@ -8,6 +8,7 @@ from ratcave.utils import rotate_to_var
 import numpy as np
 import argparse
 
+
 np.set_printoptions(precision=2, suppress=True)
 
 import motive
