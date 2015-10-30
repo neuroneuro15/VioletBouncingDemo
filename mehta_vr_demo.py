@@ -46,8 +46,8 @@ meshes['Monkey'].material.diffuse.rgb = (1.,)*3
 for name in meshes:
     if 'Plank' in name:
         meshes[name].load_texture('wood5.png')
-        meshes[name].material.diffuse.rgb = .7, .7, .7,
-        meshes[name].material.spec_weight = 3.5
+        meshes[name].material.diffuse.rgb = .5, .5, .5,
+        meshes[name].material.spec_weight = 0.
         meshes[name].material.spec_color.rgb = .4, .4, .4,
 
         meshes[name].data.normals *= -1.
