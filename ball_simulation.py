@@ -20,7 +20,7 @@ class Bouncer(Physical):
 
         # If you hit the floor, Bounce!
         if self.position[1] < self.floor_height and self.velocity[1] < 0.:
-            self.velocity[1] = 1.
+            self.velocity[1] = 1.5
             # self.velocity[1] *= -1
 
 

@@ -76,7 +76,7 @@ for name, ball in balls.items():
     position = ball.local.position.copy()
     prefix = name.split('B')[0]
     floor_height = meshes[prefix+'Plank'].local.position[1]
-    ball.local = Bouncer(velocity=(-.1, 0., 1.), acceleration_amt=-2.2, position=position, floor_height=floor_height)  #(-.1, 0., 1.)
+    ball.local = Bouncer(velocity=(-.1, 0., 1.), acceleration_amt=-4., position=position, floor_height=floor_height)  #(-.1, 0., 1.)
     ball.material.diffuse.rgb = np.random.random(3)
     ball.material.spec_color.rgb = (.7,) * 3
     ball.material.spec_weight = 15.
