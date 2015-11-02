@@ -39,6 +39,11 @@ meshes['Monkey'].load_texture(resources.img_colorgrid)
 meshes['Monkey'].material.spec_weight = 10.
 meshes['Monkey'].material.diffuse.rgb = (1.,)*3
 
+meshes['SkyBox'].material.diffuse.rgb = 1., 0., 0.
+#meshes['SkyBox'].data.normals *= -1.
+meshes['SkyBox'].local.scale = 1.
+meshes['SkyBox'].lighting = False
+meshes['SkyBox'].load_texture('DEEP_SPACE.png')
 
 #del meshes['StarGrid']
 
@@ -46,7 +51,7 @@ meshes['Monkey'].material.diffuse.rgb = (1.,)*3
 for name in meshes:
     if 'Plank' in name:
         meshes[name].load_texture('wood5.png')
-        meshes[name].material.diffuse.rgb = .5, .5, .5,
+        meshes[name].material.diffuse.rgb = (.3,) * 3
         meshes[name].material.spec_weight = 0.
         meshes[name].material.spec_color.rgb = .4, .4, .4,
 
@@ -66,6 +71,7 @@ arena.cubemap = True
 virtual_scene.light.position = active_scene.camera.position
 virtual_scene.light.rotation = active_scene.camera.rotation  # For correct shadows.  The light is being treated as directional-ish so the shadow camera knows where to point.  Bug, or quirk? Not sure.
 virtual_scene.bgColor.rgb = .1, 0., .1
+virtual_scene.camera.zFar = 100.
 
 # Make a Window
 window = Window(active_scene, screen=1, fullscr=True, virtual_scene=virtual_scene, shadow_rendering=True, shadow_fov_y = 80, autoCam=False)
