@@ -1,3 +1,5 @@
+__author__ = 'ratcave'
+
 
 __author__ = 'ratcave'
 
@@ -99,31 +101,35 @@ print("Borders: \n{}\n{}\n{}\n".format(pos_border, neg_border, ball.local.positi
 # Main loop
 clock = ratcave.utils.timers.countdown_timer(3000)
 old_time = 3000.
-while not 'escape' in event.getKeys() and clock.next() > 0.:
+
+with Logger(window, 'LogTest1') as logger:
+
+    while not 'escape' in event.getKeys() and clock.next() > 0.:
 
 
-    # Transform to Optitrack Coordinates
-    motive.update()
-    for mesh in meshes.values() + [arena]:
-        mesh.world.position = arena_rb.location
-        mesh.world.rotation = arena_rb.rotation_global
-        mesh.world.rot_y += additional_rotation
+        # Transform to Optitrack Coordinates
+        motive.update()
+        for mesh in meshes.values() + [arena]:
+            mesh.world.position = arena_rb.location
+            mesh.world.rotation = arena_rb.rotation_global
+            mesh.world.rot_y += additional_rotation
 
-    new_time = clock.next()
-    dt = old_time - new_time  # Because it's a countdown timer.
-    old_time = new_time
-    for ball in balls.values():
-        ball.local.update_physics(dt)
-        # Keep the balls inside the arena!
-        if ball.local.z < neg_border[2] or ball.local.z > pos_border[2]:
-            ball.local.velocity[0] *= -1.
-            ball.local.velocity[2] *= -1.
-
-
+        new_time = clock.next()
+        dt = old_time - new_time  # Because it's a countdown timer.
+        old_time = new_time
+        for ball in balls.values():
+            ball.local.update_physics(dt)
+            # Keep the balls inside the arena!
+            if ball.local.z < neg_border[2] or ball.local.z > pos_border[2]:
+                ball.local.velocity[0] *= -1.
+                ball.local.velocity[2] *= -1.
 
 
-    #virtual_scene.light.position[0] = np.sin(2* clock.next()) + active_scene.camera.position[0]
-    virtual_scene.camera.position = player.location
 
-    window.draw()
-    window.flip()
+
+        #virtual_scene.light.position[0] = np.sin(2* clock.next()) + active_scene.camera.position[0]
+        virtual_scene.camera.position = player.location
+
+        window.draw()
+        window.flip()
+        logger.write()
